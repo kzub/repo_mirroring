@@ -35,7 +35,7 @@ const runProgram = async (cmd, args, cwd) =>
 const cloneRepo = async (server, account, repo) => {
   const link = `git@${server}:${account}/${repo}.git`;
   const dest = `./repos/${server}-${account}/${repo}`;
-  log.i(`Cloning ${dest}`);
+  log.i(`Cloning ${link} -> ${dest}`);
   const exitCode = await runProgram('git', ['clone', link, dest]);
   if (exitCode !== 0) {
     log.e(`Error cloning ${dest}`);
@@ -43,9 +43,10 @@ const cloneRepo = async (server, account, repo) => {
 };
 
 const updateRepo = async (server, account, repo) => {
+  const link = `git@${server}:${account}/${repo}.git`;
   const cwd = `./repos/${server}-${account}/${repo}`;
 
-  log.i(`Fetching ${cwd}`);
+  log.i(`Fetching ${link} -> ${cwd}`);
   let exitCode = await runProgram('git', ['fetch'], cwd);
   if (exitCode !== 0) {
     log.e(`Error fetching ${cwd}`);

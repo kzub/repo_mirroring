@@ -2,12 +2,15 @@ const log = require('./logger').create('MAIN');
 const bitbucket = require('./bitbucket');
 const git = require('./git');
 const config = require('./config');
+const telegram = require('./telegram');
 
 process.on('uncaughtException', (err) => {
+  telegram.send('git backup error');
   log.e(`uncaughtException: ${err.stack}`);
 });
 
 process.on('unhandledRejection', (err) => {
+  telegram.send('git backup error');
   log.e(`unhandledRejection: ${err.stack}`);
 });
 

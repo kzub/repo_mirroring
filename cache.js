@@ -1,7 +1,7 @@
 const Redis = require('ioredis');
 const log = require('./logger').create('CACHE');
 
-const cacheEnabled = true;
+const cacheEnabled = false;
 let redis;
 if (cacheEnabled) {
   log.i('CACHE cacheEnabled');
