@@ -1,0 +1,6 @@
+*.sublime-project
+*.sublime-workspace
+config.js
+node_modules
+repos
+
