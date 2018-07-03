@@ -5,12 +5,12 @@ const config = require('./config');
 const telegram = require('./telegram');
 
 process.on('uncaughtException', (err) => {
-  telegram.send('git backup error');
+  telegram.send(`git backup error: ${err.message}`);
   log.e(`uncaughtException: ${err.stack}`);
 });
 
 process.on('unhandledRejection', (err) => {
-  telegram.send('git backup error');
+  telegram.send(`git backup error: ${err.message}`);
   log.e(`unhandledRejection: ${err.stack}`);
 });
 
@@ -35,7 +35,9 @@ const main = async () => {
   }
 
   const endTime = Date.now();
-  log.i(`Backuping done in ${Math.round((endTime - startTime) / 1000 / 60)} minutes`);
+  const duration = Math.round((endTime - startTime) / 1000 / 60);
+  log.i(`Backuping done in ${duration} minutes`);
+  telegram.send(`git backup OK in ${duration} minutes`);
 };
 
 main();

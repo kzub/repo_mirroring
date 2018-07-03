@@ -9,6 +9,7 @@
     "ioredis": "^3.2.2",
     "request": "2.83.0",
     "request-promise-native": "^1.0.5",
+    "socks5-https-client": "^1.2.1",
     "winston": "^3.0.0"
   },
   "devDependencies": {
