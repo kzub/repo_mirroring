@@ -17,7 +17,7 @@ process.on('unhandledRejection', (err) => {
 
 const backupAccount = async (accountConfig) => {
   let repos;
-  log.i(`${accountConfig.server}/${accountConfig.account}`);
+  log.i(`${accountConfig.server}/${accountConfig.account}: update repositories list`);
 
   if (accountConfig.server === 'bitbucket.org') {
     repos = await bitbucket.repositories(accountConfig);
@@ -27,12 +27,12 @@ const backupAccount = async (accountConfig) => {
     throw new Error(`unknown git server: ${JSON.stringify(accountConfig)}`);
   }
 
-  log.i(`${accountConfig.server}/${accountConfig.account}:${repos.length} repositories`);
+  log.i(`${accountConfig.server}/${accountConfig.account}: found ${repos.length} repositories`);
   for (const r of repos) {
     await git.backupRepo(accountConfig.server, accountConfig.account, r.name);
   }
 
-  log.i(`${accountConfig.server}/${accountConfig.account} complete`);
+  log.i(`${accountConfig.server}/${accountConfig.account}: ${repos.length} repositories complete`);
   return repos.length;
 };
 
