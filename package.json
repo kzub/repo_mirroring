@@ -4,7 +4,6 @@
   "description": "Bitbucket repository backup",
   "main": "app.js",
   "dependencies": {
-    "async-request": "^1.2.0",
     "eslint": "^4.19.1",
     "ioredis": "^3.2.2",
     "request": "2.83.0",

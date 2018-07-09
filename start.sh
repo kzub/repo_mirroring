@@ -1,3 +1,4 @@
 #!/bin/bash
-
-node app &>> mirroring.log&
+export PATH=$PATH:/opt/bin/
+cd  /var/services/homes/admin/repo_mirroring
+node app &>> mirroring.log

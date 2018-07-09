@@ -1,5 +1,6 @@
 const log = require('./logger').create('MAIN');
 const bitbucket = require('./bitbucket');
+const github = require('./github');
 const git = require('./git');
 const config = require('./config');
 const telegram = require('./telegram');
@@ -16,17 +17,22 @@ process.on('unhandledRejection', (err) => {
 
 const backupAccount = async (accountConfig) => {
   let repos;
+  log.i(`${accountConfig.server}/${accountConfig.account}`);
 
   if (accountConfig.server === 'bitbucket.org') {
     repos = await bitbucket.repositories(accountConfig);
+  } else if (accountConfig.server === 'github.com') {
+    repos = await github.repositories(accountConfig);
   } else {
     throw new Error(`unknown git server: ${JSON.stringify(accountConfig)}`);
   }
 
+  log.i(`${accountConfig.server}/${accountConfig.account}:${repos.length} repositories`);
   for (const r of repos) {
     await git.backupRepo(accountConfig.server, accountConfig.account, r.name);
   }
 
+  log.i(`${accountConfig.server}/${accountConfig.account} complete`);
   return repos.length;
 };
 
