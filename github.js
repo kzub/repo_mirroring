@@ -20,7 +20,7 @@ const repositories = async (config) => {
     },
     resolveWithFullResponse: true,
   };
-  log.i(`loading github account: ${config.account}`);
+  log.i(`loading github account: ${config.login}`);
 
   // for development use
   const cacheRes = await cache.get('repolist');
@@ -29,7 +29,7 @@ const repositories = async (config) => {
   }
 
   let result = [];
-  let link = `https://api.github.com/users/${config.account}/repos?per_page=10`;
+  let link = `https://api.github.com/users/${config.login}/repos?per_page=10`;
 
   while (link) {
     const ghRes = await request(link, opts);

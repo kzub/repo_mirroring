@@ -15,39 +15,39 @@ process.on('unhandledRejection', (err) => {
   log.e(`unhandledRejection: ${err.stack}`);
 });
 
-const backupAccount = async (accountConfig) => {
+const backupAccount = async (account) => {
   let repos;
-  log.i(`${accountConfig.server}/${accountConfig.account}: update repositories list`);
+  log.i(`${account.server}/${account.login}: update repositories list`);
 
-  if (accountConfig.server === 'bitbucket.org') {
-    repos = await bitbucket.repositories(accountConfig);
-  } else if (accountConfig.server === 'github.com') {
-    repos = await github.repositories(accountConfig);
+  if (account.server === 'bitbucket.org') {
+    repos = await bitbucket.repositories(account);
+  } else if (account.server === 'github.com') {
+    repos = await github.repositories(account);
   } else {
-    throw new Error(`unknown git server: ${JSON.stringify(accountConfig)}`);
+    throw new Error(`unknown git server: ${JSON.stringify(account)}`);
   }
 
-  log.i(`${accountConfig.server}/${accountConfig.account}: found ${repos.length} repositories`);
+  log.i(`${account.server}/${account.login}: found ${repos.length} repositories`);
   for (const r of repos) {
-    await git.backupRepo(accountConfig.server, accountConfig.account, r.name);
+    await git.backupRepo(account.server, account.login, r.name);
   }
 
-  log.i(`${accountConfig.server}/${accountConfig.account}: ${repos.length} repositories complete`);
+  log.i(`${account.server}/${account.login}: ${repos.length} repositories complete`);
   return repos.length;
 };
 
 const main = async () => {
   const startTime = Date.now();
-  let counter = 0;
+  const counters = [];
   for (const account of config.accounts) {
-    counter += await backupAccount(account);
+    const c = await backupAccount(account);
+    counters.push(`${account.server}-${account.login}: ${c} repos`);
   }
 
   const endTime = Date.now();
   const duration = Math.round((endTime - startTime) / 1000 / 60);
-  log.i(`Backuping done: ${counter} repos in ${duration} minutes`);
-  telegram.send(`git backup OK: ${counter} repos in ${duration} minutes`);
+  log.i(`Git backuping done in ${duration} minutes\n${counters.join('\n')}`);
+  telegram.send(`Git backuping done in ${duration} minutes\n${counters.join('\n')}`);
 };
 
 main();
-

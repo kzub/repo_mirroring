@@ -6,7 +6,7 @@ const repositories = async (config) => {
   const opts = {
     auth: config.auth,
   };
-  log.i(`loading bitbucket account: ${config.account}`);
+  log.i(`loading bitbucket account: ${config.login}`);
 
   // for development use
   const cacheRes = await cache.get('repolist');
@@ -15,7 +15,7 @@ const repositories = async (config) => {
   }
 
   let result = [];
-  let link = `https://api.bitbucket.org/2.0/repositories/${config.account}/?pagelen=50`;
+  let link = `https://api.bitbucket.org/2.0/repositories/${config.login}/?pagelen=50`;
 
   while (link) {
     let bbRes = await request(link, opts);
