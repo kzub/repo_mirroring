@@ -32,9 +32,23 @@ const runProgram = async (cmd, args, cwd) =>
     });
   });
 
-const cloneRepo = async (server, account, repo) => {
-  const link = `git@${server}:${account}/${repo}.git`;
-  const dest = `./repos/${server}-${account}/${repo}`;
+const getDestinationDir = (server, account, repo) => {
+  if (account) {
+    return `./repos/${server}-${account}/${repo}`;
+  }
+  return `./repos/${server}/${repo}`;
+};
+
+const getGitLink = (server, account, repo, sshLink) => {
+  if (sshLink) {
+    return sshLink;
+  }
+  return `git@${server}:${account}/${repo}.git`;
+};
+
+const cloneRepo = async (server, account, repo, sshLink) => {
+  const link = getGitLink(server, account, repo, sshLink);
+  const dest = getDestinationDir(server, account, repo);
   log.i(`Cloning ${link} -> ${dest}`);
   const exitCode = await runProgram('git', ['clone', link, dest]);
   if (exitCode !== 0) {
@@ -42,9 +56,9 @@ const cloneRepo = async (server, account, repo) => {
   }
 };
 
-const updateRepo = async (server, account, repo) => {
-  const link = `git@${server}:${account}/${repo}.git`;
-  const cwd = `./repos/${server}-${account}/${repo}`;
+const updateRepo = async (server, account, repo, sshLink) => {
+  const link = getGitLink(server, account, repo, sshLink);
+  const cwd = getDestinationDir(server, account, repo);
 
   log.i(`Fetching ${link} -> ${cwd}`);
   let exitCode = await runProgram('git', ['fetch'], cwd);
@@ -72,14 +86,14 @@ const exist = async (fname) => {
   return true;
 };
 
-const backupRepo = async (server, account, repo) => {
-  const dest = `./repos/${server}-${account}/${repo}`;
+const backupRepo = async (server, account, repo, sshLink) => {
+  const dest = getDestinationDir(server, account, repo);
   log.i('--------------------------------------------------------------------------------------');
   log.i(`Backuping ${dest}`);
   if (!(await exist(dest))) {
-    await cloneRepo(server, account, repo);
+    await cloneRepo(server, account, repo, sshLink);
   } else {
-    await updateRepo(server, account, repo);
+    await updateRepo(server, account, repo, sshLink);
   }
   log.i(`Complete ${dest}`);
 };

@@ -1,6 +1,7 @@
 const log = require('./logger').create('MAIN');
 const bitbucket = require('./bitbucket');
 const github = require('./github');
+const gitlab = require('./gitlab');
 const git = require('./git');
 const config = require('./config');
 const telegram = require('./telegram');
@@ -23,13 +24,15 @@ const backupAccount = async (account) => {
     repos = await bitbucket.repositories(account);
   } else if (account.server === 'github.com') {
     repos = await github.repositories(account);
+  } else if (account.server.includes('gitlab')) {
+    repos = await gitlab.repositories(account);
   } else {
     throw new Error(`unknown git server: ${JSON.stringify(account)}`);
   }
 
   log.i(`${account.server}/${account.login}: found ${repos.length} repositories`);
   for (const r of repos) {
-    await git.backupRepo(account.server, account.login, r.name);
+    await git.backupRepo(account.server, account.login, r.name, r.sshLink);
   }
 
   log.i(`${account.server}/${account.login}: ${repos.length} repositories complete`);
