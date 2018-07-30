@@ -24,8 +24,12 @@ const runProgram = async (cmd, args, cwd) =>
     });
 
     proc.on('close', (code) => {
+      if (code === 1) { // empty repo
+        resolv(code);
+        return;
+      }
       if (code !== 0) {
-        reject(new Error(`return code: ${code}`));
+        reject(new Error(`return error code: ${code}`));
         return;
       }
       resolv(code);
@@ -52,7 +56,7 @@ const cloneRepo = async (server, account, repo, sshLink) => {
   log.i(`Cloning ${link} -> ${dest}`);
   const exitCode = await runProgram('git', ['clone', link, dest]);
   if (exitCode !== 0) {
-    log.e(`Error cloning ${dest}`);
+    log.e(`Error cloning ${dest}, return code: ${exitCode}`);
   }
 };
 
@@ -63,13 +67,13 @@ const updateRepo = async (server, account, repo, sshLink) => {
   log.i(`Fetching ${link} -> ${cwd}`);
   let exitCode = await runProgram('git', ['fetch'], cwd);
   if (exitCode !== 0) {
-    log.e(`Error fetching ${cwd}`);
+    log.e(`Error fetching ${cwd}, return code: ${exitCode}`);
   }
 
   log.i(`Pulling ${cwd}`);
   exitCode = await runProgram('git', ['pull'], cwd);
   if (exitCode !== 0) {
-    log.e(`Error pulling ${cwd}`);
+    log.e(`Error pulling ${cwd}, return code: ${exitCode}`);
   }
 };
 
