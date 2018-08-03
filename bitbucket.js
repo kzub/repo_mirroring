@@ -1,4 +1,5 @@
 const request = require('request-promise-native');
+const SocksAgent = require('socks5-https-client/lib/Agent');
 const log = require('./logger').create('BITBUCKET');
 const cache = require('./cache');
 
@@ -6,6 +7,17 @@ const repositories = async (config) => {
   const opts = {
     auth: config.auth,
   };
+
+  if (config.socks5Proxy) {
+    opts.agentClass = SocksAgent;
+    opts.agentOptions = {
+      socksHost: config.socks5Proxy.host,
+      socksPort: config.socks5Proxy.port,
+      socksUsername: config.socks5Proxy.user,
+      socksPassword: config.socks5Proxy.password,
+    };
+  }
+
   log.i(`loading bitbucket account: ${config.login}`);
 
   // for development use
