@@ -5,6 +5,7 @@ const gitlab = require('./gitlab');
 const git = require('./git');
 const config = require('./config');
 const telegram = require('./telegram');
+const sleep = require('sleep-promise');
 
 process.on('uncaughtException', (err) => {
   telegram.send(`git backup error: ${err.message}`);
@@ -33,6 +34,10 @@ const backupAccount = async (account) => {
   log.i(`${account.server}/${account.login}: found ${repos.length} repositories`);
   for (const r of repos) {
     await git.backupRepo(account.server, account.login, r.name, r.sshLink);
+    if (account.cloneDelay) {
+      log.i(`delaying for ${account.cloneDelay / 1000} seconds`);
+      await sleep(account.cloneDelay);
+    }
   }
 
   log.i(`${account.server}/${account.login}: ${repos.length} repositories complete`);
