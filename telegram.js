@@ -1,9 +1,8 @@
 const request = require('request-promise-native');
 const config = require('./config.js');
-const SocksAgent = require('socks5-https-client/lib/Agent');
 const log = require('./logger').create('TELEGRAMM');
 
-const botURL = `https://api.telegram.org/bot${config.telegram.token}/`;
+const botURL = `${config.telegram.apiUri}/bot${config.telegram.token}/`;
 const recipients = {
   owner: config.telegram.owner,
 };
@@ -15,13 +14,6 @@ async function botCmd(method, params) {
     body: JSON.stringify(params),
     headers: {
       'Content-Type': 'application/json',
-    },
-    agentClass: SocksAgent,
-    agentOptions: {
-      socksHost: config.socks5.host,
-      socksPort: config.socks5.port,
-      socksUsername: config.socks5.user,
-      socksPassword: config.socks5.password,
     },
   };
   // console.log(url, opts);
